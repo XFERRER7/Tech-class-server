@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Word {
+  id           String         @id @default(uuid())
+  text         String
+  translations Translations[]
+  phrase       Phrase?        @relation(fields: [phraseId], references: [id])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  phraseId     String? @unique
+}
+
+model Translations {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Word      Word     @relation(fields: [wordId], references: [id])
+  wordId    String
+}
+
+model Phrase {
+  id   String @id @default(uuid())
+  text String
+  Word Word? 
+}
